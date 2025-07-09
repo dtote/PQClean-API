@@ -12,15 +12,26 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     libboost-all-dev \
     wget \
-    libasio-dev
+    libasio-dev \
+    pkg-config
 
 WORKDIR /app
 
-# Instalar Crow
-RUN git clone --depth=1 https://github.com/CrowCpp/Crow.git && \
-    mkdir -p /usr/local/include/ && \
-    cp -r Crow/include/crow /usr/local/include/ && \
-    cp Crow/include/crow.h /usr/local/include/ && \
+# Instalar Crow v1.0+3 (la más estable hasta la fecha)
+RUN git clone https://github.com/CrowCpp/Crow.git && \
+    cd Crow && \
+    git checkout v1.0+3 && \
+    mkdir build && \
+    cd build && \
+    cmake .. \
+        -DCROW_BUILD_EXAMPLES=OFF \
+        -DCROW_BUILD_TESTS=OFF \
+        -DCROW_BUILD_DOCS=OFF \
+        -DCROW_ENABLE_SSL=OFF && \
+    make -j$(nproc) && \
+    make install && \
+    ldconfig && \
+    cd /app && \
     rm -rf Crow
 
 # Instalar base64 (copiamos el .cpp al directorio de trabajo)
@@ -71,8 +82,9 @@ RUN g++ -std=c++17 -o pqclean-api pqclean-api.cpp base64.cpp -I. -I./PQClean \
     -lml-kem-512_clean -lml-kem-768_clean -lml-kem-1024_clean \
     -lml-dsa-44_clean -lml-dsa-65_clean -lml-dsa-87_clean \
     -lpqclean_common \
-    -lpthread
-
+    -lpthread \
+    `pkg-config --cflags --libs crow`
+    
 # Exponer el puerto que usa la aplicación
 EXPOSE 5003
 
