@@ -24,7 +24,6 @@
 - 🌐 **RESTful API**: Easy integration with any application
 - 🐳 **Docker Ready**: Containerized for easy deployment
 - 📦 **Bulk Operations**: Support for batch encryption/decryption
-- 🔧 **Production Ready**: Deployed on Render with auto-scaling
 
 ---
 
@@ -682,8 +681,7 @@ ab -n 1000 -c 10 http://localhost:5003/health
 ```bash
 # In your application backend
 export PQCLEAN_API_URL="http://localhost:5003"
-# or for production
-export PQCLEAN_API_URL="https://pqclean-api-production.onrender.com"
+# or for production use your own deployment URL
 ```
 
 ### **🚀 Usage in Applications:**
